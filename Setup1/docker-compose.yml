@@ -4,16 +4,14 @@ aspnetservice:
   environment:
     ConsulHost: consulagent
     rancher: host
-  links:
-  - consulagent
+  external_links:
+  - Consul/consulagent:consulagent
   labels:
     io.rancher.container.pull_image: always
   tty: true
   image: rogeralsing/aspnetconsul
   stdin_open: true
 consulagent:
-  ports:
-  - 8500:8500/tcp
   labels:
     io.rancher.scheduler.global: 'true'
     io.rancher.container.pull_image: always
@@ -28,6 +26,8 @@ consulagent:
 consul2:
   labels:
     io.rancher.container.pull_image: always
+  ports:
+  - 8500:8500/tcp
   tty: true
   command:
   - agent
@@ -42,6 +42,8 @@ consul2:
 consul3:
   labels:
     io.rancher.container.pull_image: always
+  ports:
+  - 8500:8500/tcp
   tty: true
   command:
   - agent
@@ -61,7 +63,7 @@ consul1:
   - -server
   - -bootstrap-expect=3
   ports:
-  - 8888:8500/tcp
+  - 8500:8500/tcp
   tty: true
   hostname: consul1
   image: rogeralsing/consul:latest
