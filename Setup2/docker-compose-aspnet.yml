@@ -1,13 +1,11 @@
-aspnetservice:
+aspnet:
   ports:
   - 5000:5000/tcp
-  environment:
-    ConsulHost: consulagent
-    rancher: host
-  external_links:
-  - Consul/consulagent:consulagent
   labels:
     io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:host_label: consul.role=client
+    io.rancher.container.dns: 'true'
   tty: true
-  image: rogeralsing/aspnetconsul
+  image: rogeralsing/aspnetconsul:latest
   stdin_open: true
+  net: host
