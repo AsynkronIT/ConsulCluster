@@ -1,8 +1,7 @@
 #!/bin/dumb-init /bin/sh
-#RANCHER_HOST=$(wget http://rancher-metadata.rancher.internal/2015-12-19/self/host/agent_ip -q -O -)
 set -e
 sleep 10s
-RANCHER_HOST=$(wget http://rancher-metadata.rancher.internal/2015-12-19/self/container/primary_ip -q -O -)
+RANCHER_HOST=$(wget http://rancher-metadata.rancher.internal/2015-12-19/self/host/agent_ip  -q -O -)
 echo "Found Rancher Host IP"
 echo $RANCHER_HOST
 CONSUL_ADVERTISE="-advertise=$RANCHER_HOST"
