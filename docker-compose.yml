@@ -1,6 +1,19 @@
-consulagent:
+aspnetservice:
+  ports:
+  - 5000:5000/tcp
   environment:
-    CONSUL_LOCAL_CONFIG: '{ "rejoin_after_leave": true }'
+    ConsulHost: consulagent
+    rancher: host
+  links:
+  - consulagent
+  labels:
+    io.rancher.container.pull_image: always
+  tty: true
+  image: rogeralsing/aspnetconsul
+  stdin_open: true
+consulagent:
+  ports:
+  - 8500:8500/tcp
   labels:
     io.rancher.scheduler.global: 'true'
     io.rancher.container.pull_image: always
@@ -13,40 +26,42 @@ consulagent:
   - 'consul1:'
   stdin_open: true
 consul2:
-  environment:
-    CONSUL_LOCAL_CONFIG: '{ "bootstrap_expect": 3,"rejoin_after_leave": true, "ui": true, "server": true, "data_dir": "/var/consul/data","ui_dir": "/var/consul/ui"}'
   labels:
     io.rancher.container.pull_image: always
   tty: true
   command:
   - agent
   - -retry-join=consul1
+  - -server
+  - -bootstrap-expect=3
   hostname: consul2
   image: rogeralsing/consul:latest
   links:
   - consul1:consul1
   stdin_open: true
 consul3:
-  environment:
-    CONSUL_LOCAL_CONFIG: '{ "bootstrap_expect": 3,"rejoin_after_leave": true, "ui": true, "server": true, "data_dir": "/var/consul/data","ui_dir": "/var/consul/ui"}'
   labels:
     io.rancher.container.pull_image: always
   tty: true
   command:
   - agent
   - -retry-join=consul1
+  - -server
+  - -bootstrap-expect=3
   hostname: consul3
   image: rogeralsing/consul:latest
   links:
   - 'consul1:'
   stdin_open: true
 consul1:
-  environment:
-    CONSUL_LOCAL_CONFIG: '{ "bootstrap_expect": 3,"rejoin_after_leave": true, "ui": true, "server": true, "data_dir": "/var/consul/data","ui_dir": "/var/consul/ui"}'
   labels:
     io.rancher.container.pull_image: always
   command:
   - agent
+  - -server
+  - -bootstrap-expect=3
+  ports:
+  - 8888:8500/tcp
   tty: true
   hostname: consul1
   image: rogeralsing/consul:latest

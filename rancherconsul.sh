@@ -1,10 +1,20 @@
 #!/bin/dumb-init /bin/sh
 #RANCHER_HOST=$(wget http://rancher-metadata.rancher.internal/2015-12-19/self/host/agent_ip -q -O -)
 set -e
+sleep 10s
 RANCHER_HOST=$(wget http://rancher-metadata.rancher.internal/2015-12-19/self/container/primary_ip -q -O -)
 echo "Found Rancher Host IP"
 echo $RANCHER_HOST
 CONSUL_ADVERTISE="-advertise=$RANCHER_HOST"
+CONSUL_LOCAL_CONFIG='{ 
+    "rejoin_after_leave": true, 
+    "ui": true, 
+    "data_dir": "/var/consul/data",
+    "verify_incoming": false, 
+    "verify_outgoing": false, 
+    "addresses" : { "http": "'$RANCHER_HOST'" }
+  }}'
+echo $CONSUL_LOCAL_CONFIG
 
 # Note above that we run dumb-init as PID 1 in order to reap zombie processes
 # as well as forward signals to all processes in its session. Normally, sh
