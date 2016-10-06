@@ -1,0 +1,57 @@
+consulagent:
+  labels:
+    io.rancher.scheduler.global: 'true'
+    io.rancher.container.pull_image: always
+  tty: true
+  command:
+  - agent
+  - -retry-join=consul1
+  image: rogeralsing/consul:latest
+  links:
+  - 'consul1:'
+  stdin_open: true
+consul2:
+  labels:
+    io.rancher.container.pull_image: always
+  ports:
+  - 8500:8500/tcp
+  tty: true
+  command:
+  - agent
+  - -retry-join=consul1
+  - -server
+  - -bootstrap-expect=3
+  hostname: consul2
+  image: rogeralsing/consul:latest
+  links:
+  - consul1:consul1
+  stdin_open: true
+consul3:
+  labels:
+    io.rancher.container.pull_image: always
+  ports:
+  - 8500:8500/tcp
+  tty: true
+  command:
+  - agent
+  - -retry-join=consul1
+  - -server
+  - -bootstrap-expect=3
+  hostname: consul3
+  image: rogeralsing/consul:latest
+  links:
+  - 'consul1:'
+  stdin_open: true
+consul1:
+  labels:
+    io.rancher.container.pull_image: always
+  command:
+  - agent
+  - -server
+  - -bootstrap-expect=3
+  ports:
+  - 8500:8500/tcp
+  tty: true
+  hostname: consul1
+  image: rogeralsing/consul:latest
+  stdin_open: true
